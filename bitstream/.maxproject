@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<maxCompilerManager version="2">
+<enginePart internalEngineSubproject="bitstream_EngineCode" isSrcBin="false" isUseDefaultSelected="false" outputLocation="/bitstream_EngineCode/bin" projectName="bitstream"/>
+<cpuPart internalCpuSubproject="bitstream_CPUCode"/>
+<watchedFiles/>
+</maxCompilerManager>
