@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
 //	struct in_addr mcastaddr;
 //	inet_aton("224.0.0.1", &mcastaddr);
 
-	max_file_t *maxfile = SignExtWithPatternMatching_init();
+	max_file_t *maxfile = Firewall_init();
 	max_engine_t * engine = max_load(maxfile, "*");
 
 	max_config_set_bool(MAX_CONFIG_PRINTF_TO_STDOUT, true);

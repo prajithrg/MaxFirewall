@@ -15,10 +15,10 @@ MAXOSDIR = os.environ['MAXELEROSDIR']
 MAXCOMPILERDIR = os.environ['MAXCOMPILERDIR']
 DFE_MODEL = 'ISCA'
 
-MAXFILE = 'SignExtWithPatternMatching.max'
+MAXFILE = 'Firewall.max'
 DESIGN_NAME = MAXFILE.replace('.max', '')
-sources = ['signext.c']
-target = 'signext'
+sources = ['firewallCpuCode.c']
+target = 'firewall'
 includes = []
 
 ip1 = '172.16.50.1'
