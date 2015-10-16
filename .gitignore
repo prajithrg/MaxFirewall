@@ -1,0 +1,11 @@
+*.o
+*.a
+*.la
+*.so
+*.max
+*.pyc
+*.pcap
+bin
+.metadata*
+.deps
+.project~
