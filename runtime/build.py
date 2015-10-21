@@ -21,10 +21,9 @@ sources = ['firewallCpuCode.c']
 target = 'firewall'
 includes = []
 
-ip1 = '172.16.50.1'
-tap1_ip = '172.16.50.10'
-tap1_netmask = '255.255.255.0'
-init_tap1 = 'QSFP_TOP_10G_PORT1:%s:%s' % (tap1_ip, tap1_netmask)
+port_ip =  { 'TOP': '172.16.50.1' , 'BOT': '172.16.60.1'  }
+port_tap = { 'TOP': '172.16.50.10', 'BOT': '172.16.60.10' }
+netmask = '255.255.255.0'
 
 def slicCompile():
 	"""Compiles a maxfile in to a .o file"""
@@ -50,6 +49,14 @@ cflags = ['-ggdb', '-O2', '-fPIC',
 def build():
 	compile()
 	link()
+	subprocess.call(['../test/build.py'])
+	print ("\n\nTo run in simulation, do:\n" 
+		 "\t$ ./build.py run_sim\n"
+		 "Then, in a new terminal:\n"
+		 "\t$ cd test\n"
+		 "\t$ ./receiver " + port_tap["BOT"] + "\n"
+		 "And in another terminal:\n"
+		 "\t$ ./sender " + port_ip["TOP"] + "\n")
 
 def compile():
 	slicCompile()
@@ -69,15 +76,23 @@ def getSimName():
 def maxcompilersim():
 	return '%s/bin/maxcompilersim' % MAXCOMPILERDIR
 
+
+def eth_sim(port):
+	cmd =  ['-e', 'QSFP_%s_10G_PORT1:%s:%s' % (port, port_tap[port], netmask)]
+	cmd += ['-p', 'QSFP_%s_10G_PORT1:%s.pcap' % (port, port) ] 
+	return cmd
+
 def run_sim():
 	restart_sim()
-	subprocess.call(['./' + target, ip1, tap1_ip])
+	subprocess.call(['./' + target, port_ip["TOP"], port_ip["BOT"], port_tap["BOT"]])
 
 def start_sim():
-	subprocess.call([maxcompilersim(), '-n', getSimName(), '-c', DFE_MODEL, '-e', init_tap1, '-p', 'QSFP_TOP_10G_PORT1:top1.pcap', 'restart'])
+	cmd = [maxcompilersim(), '-n', getSimName(), '-c', DFE_MODEL ] + eth_sim("TOP") + eth_sim("BOT") + ["restart"];
+	print "cmd " + " ".join(cmd);
+	subprocess.call(cmd)
 
 def stop_sim():
-	subprocess.call([maxcompilersim(), '-n', getSimName(), '-e', init_tap1, 'stop'])
+	subprocess.call([maxcompilersim(), '-n', getSimName()] + eth_sim("TOP") + eth_sim("BOT") + ["stop"])
 
 def restart_sim():
 	start_sim()	

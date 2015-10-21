@@ -13,80 +13,63 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
-#include <MaxSLiCInterface.h>
+#include "MaxSLiCInterface.h"
 
 int main(int argc, char *argv[]) {
-	if(argc < 3) {
-		printf("Usage: $0 dfe_ip remote_ip\n");
+	if (argc < 4) {
+		printf("Syntax: %s <TOP local IP> <BOT local IP> <forward IP>\n", argv[0]);
 		return 1;
 	}
 
-	struct in_addr dfe_ip;
-	inet_aton(argv[1], &dfe_ip);
-	struct in_addr remote_ip;
-	inet_aton(argv[2], &remote_ip);
+	struct in_addr top_ip;
+	struct in_addr bot_ip;
+	struct in_addr fwd_ip;
 	struct in_addr netmask;
-	inet_aton("255.255.255.0", &netmask);
-	const int in_port = 2000;
-	const int out_port = 2000;
 
-//	struct in_addr mcastaddr;
-//	inet_aton("224.0.0.1", &mcastaddr);
+	inet_aton(argv[1], &top_ip);
+	inet_aton(argv[2], &bot_ip);
+	inet_aton(argv[3], &fwd_ip);
+	inet_aton("255.255.255.0", &netmask);
+
+	uint16_t port = 7653;
+
+	printf("EthFwd: TOP IP '%s', BOT IP '%s', Forward IP '%s', port %u\n", argv[1], argv[2], argv[3], port);
 
 	max_file_t *maxfile = Firewall_init();
-	max_engine_t * engine = max_load(maxfile, "*");
+	max_engine_t * engine = max_load(maxfile, "*");	
+
+	max_ip_config(engine, MAX_NET_CONNECTION_QSFP_TOP_10G_PORT1, &top_ip, &netmask);
+	max_ip_config(engine, MAX_NET_CONNECTION_QSFP_BOT_10G_PORT1, &bot_ip, &netmask);
+
+	struct ether_addr local_mac2, remote_mac2;
+	max_arp_lookup_entry(engine, MAX_NET_CONNECTION_QSFP_BOT_10G_PORT1, &fwd_ip, &remote_mac2);
+	max_eth_get_default_mac_address(engine, MAX_NET_CONNECTION_QSFP_BOT_10G_PORT1, &local_mac2);
+
+	uint64_t localMac = 0, forwardMac = 0;
+	memcpy(&localMac, &local_mac2, 6);
+	memcpy(&forwardMac, &remote_mac2, 6);
+
+	printf("local MAC = %012llx\n" , (long long)localMac);
+	printf("forward MAC = %012llx\n" , (long long)forwardMac);
 
 	max_config_set_bool(MAX_CONFIG_PRINTF_TO_STDOUT, true);
 
-	max_actions_t *actions = max_actions_init(maxfile, NULL);
+	max_actions_t *action = max_actions_init(maxfile, NULL);
+	max_set_uint64t(action, "fwdKernel", "localIp", bot_ip.s_addr);
+	max_set_uint64t(action, "fwdKernel", "forwardIp", fwd_ip.s_addr);
+	max_set_uint64t(action, "fwdKernel", "localMac", localMac);
+	max_set_uint64t(action, "fwdKernel", "forwardMac", forwardMac);
+	max_set_uint64t(action, "fwdKernel", "port", port);
+	max_run(engine, action);
 
-	max_run(engine, actions);
-	max_actions_free(actions);
+	printf("JDFE Running.\n");
+	getchar();
 
-
-	void *buffer;
-	size_t bufferSize = 4096 * 512;
-	posix_memalign(&buffer, 4096, bufferSize);
-
-	max_framed_stream_t *toCpu = max_framed_stream_setup(engine, "toCPU", buffer, bufferSize, -1);
-
-	max_ip_config(engine, MAX_NET_CONNECTION_QSFP_TOP_10G_PORT1, &dfe_ip, &netmask);
-	max_udp_socket_t *dfe_socket = max_udp_create_socket(engine, "udpTopPort1");
-//	max_ip_multicast_join_group(engine, MAX_NET_CONNECTION_QSFP_TOP_10G_PORT1, &mcastaddr);
-//	max_udp_bind_ip(dfe_socket, &mcastaddr, in_port);
-	max_udp_bind(dfe_socket, in_port);
-	max_udp_connect(dfe_socket, &remote_ip, out_port);
-
-	printf("Listening on %s in_port %d\n", argv[1], in_port);
-
-	printf("Waiting for kernel response...\n"); fflush(stdout);
-
-	void *f;
-	size_t fsz;
-	size_t numMessageRx = 0;
-	while (1) {
-		if (max_framed_stream_read(toCpu, 1, &f, &fsz) == 1) {
-			numMessageRx++;
-
-			printf("CPU: Got output frame %zd - size %zd bytes\n", numMessageRx, fsz);
-
-			uint64_t *w = f;
-			for (size_t i=0; i < 3; i++) {
-				printf("Frame [%zd] Word[%zd]: 0x%lx\n", numMessageRx, i, w[i]);
-			}
-
-
-			max_framed_stream_discard(toCpu, 1);
-		} else 	usleep(10);
-	}
-
-//	max_ip_multicast_leave_group(engine, MAX_NET_CONNECTION_QSFP_TOP_10G_PORT1, &mcastaddr);
-	max_udp_close(dfe_socket);
 	max_unload(engine);
 	max_file_free(maxfile);
 
-	printf("Done.\n"); fflush(stdout);
+	printf("Done.\n");
 	return 0;
 }
+
