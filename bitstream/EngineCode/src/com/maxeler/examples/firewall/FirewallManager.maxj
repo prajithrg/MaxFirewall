@@ -36,13 +36,13 @@ public class FirewallManager extends NetworkManager {
 		EthernetRXType rxLinkType = new EthernetRXType();
 		EthernetTXType txLinkType = new EthernetTXType();
 
-		KernelBlock inputKernel = addKernel(new FirewallInKernel(makeKernelParameters("fwdKernel"), rxLinkType, txLinkType));
-		inputKernel.getInput(FirewallInKernel.INPUT) <== top1EthRx;
-		bot1EthTx <== inputKernel.getOutput(FirewallInKernel.OUTPUT);
+		KernelBlock inputKernel = addKernel(new InFirewallKernel(makeKernelParameters("inFirewallKernel"), rxLinkType, txLinkType));
+		inputKernel.getInput(InFirewallKernel.INPUT) <== top1EthRx;
+		bot1EthTx <== inputKernel.getOutput(InFirewallKernel.OUTPUT);
 
-		KernelBlock outputKernel = addKernel(new FirewallOutKernel(makeKernelParameters("fwdKernel"), rxLinkType, txLinkType));
-		outputKernel.getInput(FirewallOutKernel.INPUT) <== bot1EthRx;
-		top1EthTx <== outputKernel.getOutput(FirewallOutKernel.OUTPUT);
+		KernelBlock outputKernel = addKernel(new OutFirewallKernel(makeKernelParameters("outFirewallKernel"), rxLinkType, txLinkType));
+		outputKernel.getInput(OutFirewallKernel.INPUT) <== bot1EthRx;
+		top1EthTx <== outputKernel.getOutput(OutFirewallKernel.OUTPUT);
 
 	}
 

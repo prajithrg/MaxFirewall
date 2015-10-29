@@ -49,7 +49,7 @@ cflags = ['-ggdb', '-O2', '-fPIC',
 def build():
 	compile()
 	link()
-	subprocess.call(['../test/build.py'])
+	subprocess.call(['./test/build.py'])
 	print ("\n\nTo run in simulation, do:\n" 
 		 "\t$ ./build.py run_sim\n"
 		 "Then, in a new terminal:\n"

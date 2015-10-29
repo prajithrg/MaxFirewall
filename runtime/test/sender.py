@@ -24,4 +24,5 @@ DstPort = 7653
 send_packet = Ether(dst=Tap0Mac,src=DFETopMac,type=0x800)/IP(src=Tap0IP,dst=Tap1IP)/UDP(sport=SrcPort,dport=DstPort)/"GET /index.html HTTP/1.0 \n\n"/generate_load(646)
 sendp(send_packet, iface="tap0")
 
-
+send_packet = Ether(dst=Tap0Mac,src=DFETopMac,type=0x800)/IP(src=Tap0IP,dst=Tap1IP)/TCP(sport=SrcPort,dport=DstPort)/"GET /index.html HTTP/1.0 \n\n"/generate_load(646)
+sendp(send_packet, iface="tap0")

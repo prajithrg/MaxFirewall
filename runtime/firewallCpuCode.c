@@ -32,37 +32,39 @@ int main(int argc, char *argv[]) {
 	inet_aton(argv[3], &fwd_ip);
 	inet_aton("255.255.255.0", &netmask);
 
-	uint16_t port = 7653;
-	uint8_t protocol = 17;
+	uint16_t inDstPort = 7653;
+	uint8_t inIPProtocol = 17;
 
-	printf("EthFwd: TOP IP '%s', BOT IP '%s', Forward IP '%s', protocol %u, port %u\n", argv[1], argv[2], argv[3], protocol, port);
+	uint16_t outDstPort = 7653;
+	uint8_t outIPProtocol = 17;
 
+	printf("Rules: INPUT--IPProtocol=%u, DstPort=%u :: OUTPUT-- IPProtocol=%u, DstPort=%u\n", inIPProtocol, inDstPort, outIPProtocol, outDstPort);
 	max_file_t *maxfile = Firewall_init();
 	max_engine_t * engine = max_load(maxfile, "*");	
 
-	max_ip_config(engine, MAX_NET_CONNECTION_QSFP_TOP_10G_PORT1, &top_ip, &netmask);
-	max_ip_config(engine, MAX_NET_CONNECTION_QSFP_BOT_10G_PORT1, &bot_ip, &netmask);
+//	max_ip_config(engine, MAX_NET_CONNECTION_QSFP_TOP_10G_PORT1, &top_ip, &netmask);
+//	max_ip_config(engine, MAX_NET_CONNECTION_QSFP_BOT_10G_PORT1, &bot_ip, &netmask);
 
-	struct ether_addr local_mac2, remote_mac2;
-	max_arp_lookup_entry(engine, MAX_NET_CONNECTION_QSFP_BOT_10G_PORT1, &fwd_ip, &remote_mac2);
-	max_eth_get_default_mac_address(engine, MAX_NET_CONNECTION_QSFP_BOT_10G_PORT1, &local_mac2);
+//	struct ether_addr local_mac2, remote_mac2;
+//	max_arp_lookup_entry(engine, MAX_NET_CONNECTION_QSFP_BOT_10G_PORT1, &fwd_ip, &remote_mac2);
+//	max_eth_get_default_mac_address(engine, MAX_NET_CONNECTION_QSFP_BOT_10G_PORT1, &local_mac2);
 
-	uint64_t localMac = 0, forwardMac = 0;
-	memcpy(&localMac, &local_mac2, 6);
-	memcpy(&forwardMac, &remote_mac2, 6);
+//	uint64_t localMac = 0, forwardMac = 0;
+//	memcpy(&localMac, &local_mac2, 6);
+//	memcpy(&forwardMac, &remote_mac2, 6);
 
-	printf("local MAC = %012llx\n" , (long long)localMac);
-	printf("forward MAC = %012llx\n" , (long long)forwardMac);
+//	printf("local MAC = %012llx\n" , (long long)localMac);
+//	printf("forward MAC = %012llx\n" , (long long)forwardMac);
 
 	max_config_set_bool(MAX_CONFIG_PRINTF_TO_STDOUT, true);
 
 	max_actions_t *action = max_actions_init(maxfile, NULL);
-	max_set_uint64t(action, "fwdKernel", "localIp", bot_ip.s_addr);
-	max_set_uint64t(action, "fwdKernel", "forwardIp", fwd_ip.s_addr);
-	max_set_uint64t(action, "fwdKernel", "localMac", localMac);
-	max_set_uint64t(action, "fwdKernel", "forwardMac", forwardMac);
-	max_set_uint64t(action, "fwdKernel", "protocol", protocol);
-	max_set_uint64t(action, "fwdKernel", "port", port);
+	max_set_uint64t(action, "inFirewallKernel", "inIPProtocol", inIPProtocol);
+	max_set_uint64t(action, "inFirewallKernel", "inDstPort", inDstPort);
+
+	max_set_uint64t(action, "outFirewallKernel", "outIPProtocol", outIPProtocol);
+	max_set_uint64t(action, "outFirewallKernel", "outDstPort", outDstPort);
+
 	max_run(engine, action);
 
 	printf("JDFE Running.\n");
