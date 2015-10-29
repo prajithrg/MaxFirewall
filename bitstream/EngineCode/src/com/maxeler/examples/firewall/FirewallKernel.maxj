@@ -73,44 +73,45 @@ public class FirewallKernel extends Kernel {
 		DFEVar forwardMac = io.scalarInput("forwardMac", dfeRawBits(48));
 		DFEVar localIp = io.scalarInput("localIp", dfeUInt(32));
 		DFEVar forwardIp = io.scalarInput("forwardIp", dfeUInt(32));
+		DFEVar protocol = io.scalarInput("protocol", dfeUInt(8));
 		DFEVar port = io.scalarInput("port", dfeUInt(16));
 
 
 
-		wordData = replaceField(isStart, wordData, DST_IP, forwardIp);
+		//wordData = replaceField(isStart, wordData, DST_IP, forwardIp);
 
 		/*
 		 * Change checksums.
 		 */
 
-		ipChecksum = to32(~ipChecksum);
-		ipChecksum -= sum16(srcIp);
-		ipChecksum -= sum16(dstIp);
-		ipChecksum += sum16(localIp);
-		ipChecksum += sum16(forwardIp);
-		ipChecksum = wrap16(ipChecksum);
-		ipChecksum = ~ipChecksum;
-
-
-		udpChecksum = to32(~udpChecksum);
-		udpChecksum -= sum16(srcIp);
-		udpChecksum -= sum16(dstIp);
-		udpChecksum += sum16(localIp);
-		udpChecksum += sum16(forwardIp);
-		udpChecksum = wrap16(udpChecksum);
-		udpChecksum = ~udpChecksum;
-
-		udpChecksum = udpChecksum === 0 ? ~udpChecksum : udpChecksum;
+//		ipChecksum = to32(~ipChecksum);
+//		ipChecksum -= sum16(srcIp);
+//		ipChecksum -= sum16(dstIp);
+//		ipChecksum += sum16(localIp);
+//		ipChecksum += sum16(forwardIp);
+//		ipChecksum = wrap16(ipChecksum);
+//		ipChecksum = ~ipChecksum;
+//
+//
+//		udpChecksum = to32(~udpChecksum);
+//		udpChecksum -= sum16(srcIp);
+//		udpChecksum -= sum16(dstIp);
+//		udpChecksum += sum16(localIp);
+//		udpChecksum += sum16(forwardIp);
+//		udpChecksum = wrap16(udpChecksum);
+//		udpChecksum = ~udpChecksum;
+//
+//		udpChecksum = udpChecksum === 0 ? ~udpChecksum : udpChecksum;
 
 
 		wordData = replaceField(isStart, wordData, SRC_MAC, localMac);
 		wordData = replaceField(isStart, wordData, DST_MAC, forwardMac);
 
-		wordData = replaceField(isStart, wordData, SRC_IP, localIp);
-		wordData = replaceField(isStart, wordData, DST_IP, forwardIp);
-
-		wordData = replaceField(isStart, wordData, IP_CHECKSUM, ipChecksum);
-		wordData = replaceField(isStart, wordData, UDP_CHECKSUM, udpChecksum);
+//		wordData = replaceField(isStart, wordData, SRC_IP, localIp);
+//		wordData = replaceField(isStart, wordData, DST_IP, forwardIp);
+//
+//		wordData = replaceField(isStart, wordData, IP_CHECKSUM, ipChecksum);
+//		wordData = replaceField(isStart, wordData, UDP_CHECKSUM, udpChecksum);
 
 
 		/*
@@ -118,7 +119,7 @@ public class FirewallKernel extends Kernel {
 		 *    Only UDP Packets with a Destination port equal to 'port'
 		 */
 		DFEVar shouldDrop = byteReverse(etherType) === 0x0800; // ETHERTYPE_IP
-		shouldDrop = shouldDrop & (ipProtocol === 17); // IPPROTO_UDP
+		shouldDrop = shouldDrop & (ipProtocol === protocol); // IPPROTO_UDP
 		shouldDrop = shouldDrop & (byteReverse(dstPort) === port); // port is in Big Endian
 
 		DFEStruct outputStruct = txLinkType.getDFEStructType().newInstance(this);
@@ -133,7 +134,7 @@ public class FirewallKernel extends Kernel {
 					.withInitValue(0)
 				).getCount();
 
-		debug.simPrintf(isStart, "Frame [%d]: etherType = 0x%x, ipProtocol = %d, dstPort = %d --> shouldDrop: %d\n",
+		debug.simPrintf(isStart, "Frame [%d]: etherType = 0x%x, ipProtocol = %d, dstPort = %d --> Dropped: %d\n",
 				frameCount,
 				byteReverse(etherType), ipProtocol, byteReverse(dstPort),
 				shouldDrop);
@@ -248,14 +249,11 @@ public class FirewallKernel extends Kernel {
 					fieldSlice = wordStream.slice(remBits, wordSizeBits - remBits) # fieldSlice;
 				}
 			}
-
-
 			newFieldWords.add(fieldSlice);
 			remBits -= bitsNow;
 			pos += bitsNow;
 			firstWord = false;
 		}
-
 
 		DFEVar count = control.count.makeCounter(
 				control.count.makeParams(MathUtils.bitsToRepresent(startWord + neededWords + 1))
