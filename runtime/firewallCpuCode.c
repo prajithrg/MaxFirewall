@@ -33,8 +33,9 @@ int main(int argc, char *argv[]) {
 	inet_aton("255.255.255.0", &netmask);
 
 	uint16_t port = 7653;
+	uint8_t protocol = 17;
 
-	printf("EthFwd: TOP IP '%s', BOT IP '%s', Forward IP '%s', port %u\n", argv[1], argv[2], argv[3], port);
+	printf("EthFwd: TOP IP '%s', BOT IP '%s', Forward IP '%s', protocol %u, port %u\n", argv[1], argv[2], argv[3], protocol, port);
 
 	max_file_t *maxfile = Firewall_init();
 	max_engine_t * engine = max_load(maxfile, "*");	
@@ -60,6 +61,7 @@ int main(int argc, char *argv[]) {
 	max_set_uint64t(action, "fwdKernel", "forwardIp", fwd_ip.s_addr);
 	max_set_uint64t(action, "fwdKernel", "localMac", localMac);
 	max_set_uint64t(action, "fwdKernel", "forwardMac", forwardMac);
+	max_set_uint64t(action, "fwdKernel", "protocol", protocol);
 	max_set_uint64t(action, "fwdKernel", "port", port);
 	max_run(engine, action);
 
