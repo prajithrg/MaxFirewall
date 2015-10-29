@@ -6,5 +6,7 @@ undo last commit
 -------------
 git reset --soft HEAD~1
 
-
+iptables eg.
+-------------
+sudo iptables -A OUTPUT -o tap0 -s 172.16.50.10 -d 172.16.50.255 -p udp --dport 1534 -j DROP
 

@@ -27,15 +27,22 @@ public class FirewallManager extends NetworkManager {
 		ManagerClock netClk = getNetworkClock(Max4NetworkConnection.QSFP_TOP_10G_PORT1);
 		pushDefaultClock(netClk);
 
-		DFELink ethRx = ethTop1.getReceiveStream();
-		DFELink ethTx = ethBot1.getTransmitStream();
+		DFELink top1EthRx = ethTop1.getReceiveStream();
+		DFELink top1EthTx = ethTop1.getTransmitStream();
+
+		DFELink bot1EthTx = ethBot1.getTransmitStream();
+		DFELink bot1EthRx = ethBot1.getReceiveStream();
 
 		EthernetRXType rxLinkType = new EthernetRXType();
 		EthernetTXType txLinkType = new EthernetTXType();
 
-		KernelBlock kernel = addKernel(new FirewallKernel(makeKernelParameters("fwdKernel"), rxLinkType, txLinkType));
-		kernel.getInput(FirewallKernel.INPUT) <== ethRx;
-		ethTx <== kernel.getOutput(FirewallKernel.OUTPUT);
+		KernelBlock inputKernel = addKernel(new FirewallInKernel(makeKernelParameters("fwdKernel"), rxLinkType, txLinkType));
+		inputKernel.getInput(FirewallInKernel.INPUT) <== top1EthRx;
+		bot1EthTx <== inputKernel.getOutput(FirewallInKernel.OUTPUT);
+
+		KernelBlock outputKernel = addKernel(new FirewallOutKernel(makeKernelParameters("fwdKernel"), rxLinkType, txLinkType));
+		outputKernel.getInput(FirewallOutKernel.INPUT) <== bot1EthRx;
+		top1EthTx <== outputKernel.getOutput(FirewallOutKernel.OUTPUT);
 
 	}
 
