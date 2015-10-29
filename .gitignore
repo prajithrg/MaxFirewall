@@ -10,3 +10,13 @@ bin
 .deps
 .project~
 debug
+gitCommands.txt~
+runtime/debug_1/
+runtime/debug_2/
+runtime/debug_3/
+runtime/debug_4/
+runtime/firewall
+runtime/firewallCpuCode.c~
+runtime/test/ref.py
+runtime/test/sender.py~
+sender/
