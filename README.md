@@ -34,15 +34,15 @@ Then, in a new terminal:
 	$ sudo ./incomingSender.py
 And in another terminal:
 	$ sudo ./outgoingSender.py
-
+```
 
 The application will continue to wait for more packets, so when you are finished, hit <kbd>ctrl</kbd> + <kbd>c</kbd> to exit.
 
 
-## Expected behaviour
+### Expected behaviour
 
 
-## Verifying output
+### Verifying output
 
 This requires a packet sniffing tool like *wireshark* to read the dumped pcap file.
 
