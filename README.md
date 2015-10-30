@@ -1,8 +1,8 @@
 ## A Simple transparent Layer 2 Firewall with IP Protocol/Destination Port In/Output Rules 
 
-A simple firewall application which acts as a transparent layer 2 bridge protecting a network. The application can be configured with INPUT and OUTPUT rule with respect to the network protected i.e. input rules are those rules which will be applied to the traffic flowing into the protected network and the output rules for traffic flowing out. As of now the application supports only a single rule, which is a IP Protocol/Destination Port pair for input and output traffic.
+![](https://github.com/prajithrg/MaxFirewall/blob/master/Firewall.jpg)
 
-[![](https://github.com/prajithrg/MaxFirewall/blob/master/Firewall.jpg)]
+A simple firewall application which acts as a transparent layer 2 bridge protecting a network. The application can be configured with INPUT and OUTPUT rule with respect to the network protected i.e. input rules are those rules which will be applied to the traffic flowing into the protected network and the output rules for traffic flowing out. As of now the application supports only a single rule, which is a IP Protocol/Destination Port pair for input and output traffic.
 
 ## Building the Firewall App
 
