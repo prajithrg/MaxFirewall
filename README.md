@@ -1,2 +1,2 @@
 # MaxFirewall
-Simple TCP port based firewall
+A Simple transparent Layer 2 IP Protocol/Destination Port Firewall
