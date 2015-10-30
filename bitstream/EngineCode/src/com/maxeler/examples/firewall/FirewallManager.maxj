@@ -44,6 +44,8 @@ public class FirewallManager extends NetworkManager {
 		outputKernel.getInput(OutFirewallKernel.INPUT) <== bot1EthRx;
 		top1EthTx <== outputKernel.getOutput(OutFirewallKernel.OUTPUT);
 
+		//top1EthTx <== bot1EthRx;
+
 	}
 
 	public static void main(final String[] args) {

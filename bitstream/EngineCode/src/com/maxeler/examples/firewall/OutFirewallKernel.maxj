@@ -66,7 +66,7 @@ public class OutFirewallKernel extends Kernel {
 				.withInitValue(0)
 		).getCount();
 
-		debug.simPrintf(isStart, "OUT Frame [%d]: etherType = 0x%x, ipProtocol = %d, dstPort = %d --> Dropped: %d\n",
+		debug.simPrintf(isStart & shouldDrop, "OUT Frame [%d]: etherType = 0x%x, ipProtocol = %d, dstPort = %d --> Dropped: %d\n",
 				frameCount,
 				byteReverse(etherType), ipProtocol, byteReverse(dstPort),
 				shouldDrop);

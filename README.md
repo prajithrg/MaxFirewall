@@ -1,4 +1,4 @@
-## A Simple transparent Layer 2 Firewall with IP Protocol/Destination Port In/Output Rules 
+## A Simple transparent Layer 2 Firewall 
 
 ![](https://github.com/prajithrg/MaxFirewall/blob/master/Firewall.jpg)
 

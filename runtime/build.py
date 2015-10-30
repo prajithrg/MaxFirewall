@@ -49,14 +49,13 @@ cflags = ['-ggdb', '-O2', '-fPIC',
 def build():
 	compile()
 	link()
-	subprocess.call(['./test/build.py'])
 	print ("\n\nTo run in simulation, do:\n" 
 		 "\t$ ./build.py run_sim\n"
 		 "Then, in a new terminal:\n"
 		 "\t$ cd test\n"
-		 "\t$ ./receiver " + port_tap["BOT"] + "\n"
+		 "\t$ sudo ./incomingSender.py\n"
 		 "And in another terminal:\n"
-		 "\t$ ./sender " + port_ip["TOP"] + "\n")
+		 "\t$ sudo ./outgoingSender.py\n")
 
 def compile():
 	slicCompile()
