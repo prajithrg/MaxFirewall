@@ -41,7 +41,20 @@ The application will continue to wait for more packets, so when you are finished
 
 
 ### Expected behaviour
+The packet drops will be printed on to stdout console as below.
 
+```
+...
+...
+Rules: INPUT--IPProtocol=17, DstPort=7653 :: OUTPUT-- IPProtocol=17, DstPort=1534
+JDFE Running.
+OUT Frame [1]: etherType = 0x800, ipProtocol = 17, dstPort = 1534 --> Dropped: 1
+OUT Frame [3]: etherType = 0x800, ipProtocol = 17, dstPort = 1534 --> Dropped: 1
+INPUT Frame [24]: etherType = 0x800, ipProtocol = 17, dstPort = 7653 --> Dropped: 1
+INPUT Frame [26]: etherType = 0x800, ipProtocol = 17, dstPort = 7653 --> Dropped: 1
+...
+...
+```
 
 ### Verifying output
 
