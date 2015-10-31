@@ -32,6 +32,7 @@ int main(int argc, char *argv[]) {
 	inet_aton(argv[3], &fwd_ip);
 	inet_aton("255.255.255.0", &netmask);
 
+	// INPUT/OUTPUT Rule Configuration : IP Protocol (UDP=17, TCP=6, etc.) & Destination Port
 	uint16_t inDstPort = 7653;
 	uint8_t inIPProtocol = 17;
 
