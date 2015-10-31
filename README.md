@@ -41,7 +41,7 @@ The application will continue to wait for more packets, so when you are finished
 
 
 ### Expected behaviour
-The packet drops will be printed on to stdout console as below.
+The input and output firewall rules are configured in the `firewallCpuCode.c`. You can mention the IP protocol and destination port of the packet to be dropped. The packet drops will be printed on to stdout console as below with the frame number as dropped by the DFE.
 
 ```
 ...
