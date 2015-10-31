@@ -22,7 +22,7 @@ Tap1IP = "172.16.60.10"
 SrcPort = 6653
 DstPort = 7653
 
-drop_packet = Ether(dst=DFETopMac,src=Tap0Mac,type=0x800)/IP(src=Tap0IP,dst=Tap1IP)/UDP(sport=SrcPort,dport=DstPort)/generate_load(650)
+drop_packet = Ether(dst=DFETopMac,src=Tap0Mac,type=0x800)/IP(src=Tap0IP,dst=Tap1IP)/UDP(sport=SrcPort,dport=DstPort)/generate_load(646)
 dropThread = Thread(target=sendp, args=(drop_packet,), kwargs=dict(iface="tap0",count=100))
 
 #sendp(send_packet, iface="tap0", loop=1)
