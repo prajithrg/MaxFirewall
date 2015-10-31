@@ -2,7 +2,7 @@
 
 ![](https://github.com/prajithrg/MaxFirewall/blob/master/Firewall.jpg)
 
-A simple firewall application which acts as a transparent layer 2 bridge protecting a network. The application can be configured with INPUT and OUTPUT rule with respect to the network protected i.e. input rules are those rules which will be applied to the traffic flowing into the protected network and the output rules for traffic flowing out. As of now the application supports only a single rule, which is a IP Protocol/Destination Port pair for input and output traffic.
+A simple firewall application which acts as a transparent layer 2 bridge protecting a network. The application can be configured with INPUT and OUTPUT rule with respect to the network protected i.e. input rules are those rules which will be applied to the traffic flowing into the protected network and the output rules for traffic flowing out. As of now the application supports only a single rule, which is to drop a IP Protocol/Destination Port pair for input and output traffic.
 
 ## Building the Firewall App
 
@@ -16,9 +16,10 @@ Open `FirewallManager.maxj` and Run as Java Application.
 
 Copy the maxfile output from the above step to the `runtime` directory.
 
-```
+``` 
 $ source config.sh
 $ cd runtime
+$ cp <pathToFirewallMaxFile> .
 $ ./build.py
 /opt/maxeler/maxcompiler/bin/sliccompile Firewall.max Firewall.o
 Processing maxfile for MAX4AB24B_SIM from 'Firewall.max'.
@@ -36,7 +37,7 @@ And in another terminal:
 	$ sudo ./outgoingSender.py
 ```
 
-The application will continue to wait for more packets, so when you are finished, hit <kbd>ctrl</kbd> + <kbd>c</kbd> to exit.
+The application will continue to wait for more packets, so when you are finished, hit <kbd>ctrl</kbd> + <kbd>c</kbd> to exit. The test infrastructure requires the `scapy` python module to be installed.
 
 
 ### Expected behaviour
@@ -52,8 +53,10 @@ Verify that a network trace has been captured by running `ls` and looking for `T
 $ ls
 <...>
 TOP.pcap
+BOT.pcap
 <...>
 $ wireshark TOP.pcap &
+$ wireshark BOT.pcap &
 ```
 
 You can view only the packets of interest by filtering with the search terms..
