@@ -1,4 +1,4 @@
-## A Simple Layer 2 Firewall 
+## Simple Stateless Firewall 
 
 ![](https://github.com/prajithrg/MaxFirewall/blob/master/Firewall.jpg)
 
