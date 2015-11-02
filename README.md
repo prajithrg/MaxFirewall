@@ -2,7 +2,7 @@
 
 ![](https://github.com/prajithrg/MaxFirewall/blob/master/Firewall.jpg)
 
-A simple firewall application using the Maxeler system which can be deployed transparently as a layer 2 bridge protecting a network. The application can be configured with INPUT and OUTPUT rule with respect to the network protected i.e. input rules are those rules which will be applied to the traffic flowing into the protected network and the output rules for traffic flowing out. As of now the application supports only a single rule, which is to drop a IP Protocol/Destination Port pair for input and output traffic.
+A simple, stateless firewall application using the Maxeler system which can be deployed transparently as a layer 2 bridge protecting a network. The application can be configured with INPUT and OUTPUT rule with respect to the network protected i.e. input rules are those rules which will be applied to the traffic flowing into the protected network and the output rules for traffic flowing out. As of now the application supports only a single rule, which is to drop a IP Protocol/Destination Port pair for input and output traffic.
 
 ## Building the Firewall App
 
